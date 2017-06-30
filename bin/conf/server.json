@@ -1,0 +1,10 @@
+{
+	"LogLevel"		: "debug",
+	"LogPath"		: "",
+	"TCPAddr"		: "192.168.56.101:3563",
+	"WSAddr"		: "192.168.56.101:3653",
+	"MaxConnNum"	: 20000,
+
+	"DBMaxConnNum "	: 100,
+	"DBUrl"			: "mongodb://niuniu:niuniu@192.168.56.101:27017/niuniu"
+}
