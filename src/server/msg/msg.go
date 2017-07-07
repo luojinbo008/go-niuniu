@@ -25,12 +25,14 @@ const (
 
 func init() {
 	Processor.Register(&Hello{})
-	Processor.Register(&UserLoginInfo{})
+	Processor.Register(&UserLoginByWechat{})
+	Processor.Register(&CodeState{})
 }
 
 type CodeState struct {
-	MSG_STATE 	int 	// const
-	Message 	string 	// 警告信息
+	CODE 		int 			// const
+	MSG 		string 			// 警告信息
+	DATA		interface{}	//
 }
 
 type Hello struct {
@@ -38,15 +40,8 @@ type Hello struct {
 }
 
 // 登录
-type UserLoginInfo struct {
-	Name 	string
-	Pwd		string
+type UserLoginByWechat struct {
+	Code 		string
 }
-
-type LoginError struct {
-	State 	int
-	Message	string
-}
-
 
 

@@ -2,7 +2,6 @@ package internal
 
 import (
 	"github.com/name5566/leaf/gate"
-	"fmt"
 	"server/msg"
 )
 
@@ -22,17 +21,29 @@ func rpcCloseAgent(args []interface{}) {
 	_ = a
 }
 
+
 func rpcLoginAgent(args []interface{}) {
-	fmt.Println("-rpclon-:",args)
 	a := args[0].(gate.Agent)
-	fmt.Println("get m--:",a)
-	fmt.Println("len--:",len(args))
-	m := args[1].(*msg.UserLoginInfo)
-	err := login(m)
-	if err != nil{
+	m := args[1].(*msg.UserLoginByWechat)
+
+	userInfo, err := wechatLogin(m)
+	if err != nil {
 		a.WriteMsg(
-			&msg.CodeState{MSG_STATE : msg.MSG_DB_Error},
+			&msg.CodeState{
+				CODE 	: msg.MSG_DB_Error,
+				MSG		: "DB ERROR",
+			},
 		)
 		return
 	}
+
+	// 返回信息
+	a.WriteMsg(
+		&msg.CodeState {
+			CODE 	: msg.MSG_Login_OK,
+			MSG		: "LOGIN SUCCESS",
+			DATA	: userInfo,
+		},
+	)
+	return
 }

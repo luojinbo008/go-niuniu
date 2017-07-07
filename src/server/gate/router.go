@@ -9,5 +9,5 @@ import (
 func init() {
 	msg.Processor.SetRouter(&msg.Hello{},game.ChanRPC)
 
-	msg.Processor.SetRouter(&msg.UserLoginInfo{},login.ChanRPC)
+	msg.Processor.SetRouter(&msg.UserLoginByWechat{},login.ChanRPC)
 }
