@@ -7,14 +7,15 @@ import (
 )
 
 func init() {
-	handler(&msg.UserLoginByWechat{},handlLoginUser)
+	handler(&msg.UserLoginByWechat{},handlWechatLoginUser)
+	handler(&msg.UserReLogin{},handlReLoginUser)
 }
 
 func handler(m interface{}, h interface{})  {
 	skeleton.RegisterChanRPC(reflect.TypeOf(m), h)
 }
 
-func handlLoginUser(args []interface{}) {
+func handlWechatLoginUser(args []interface{}) {
 
 	// 收到登陆信息
 	m := args[0].(*msg.UserLoginByWechat)
@@ -23,6 +24,18 @@ func handlLoginUser(args []interface{}) {
 	a := args[1].(gate.Agent)
 
 	// 交给 game
-	game.ChanRPC.Go("LoginAgent", a, m)
+	game.ChanRPC.Go("LoginWechatAgent", a, m)
+}
+
+func handlReLoginUser(args []interface{})  {
+
+	// 收到登陆信息
+	m := args[0].(*msg.UserReLogin)
+
+	// 获取发送者
+	a := args[1].(gate.Agent)
+
+	// 交给 game
+	game.ChanRPC.Go("LoginReAgent", a, m)
 
 }

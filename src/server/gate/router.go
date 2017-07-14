@@ -10,4 +10,5 @@ func init() {
 	msg.Processor.SetRouter(&msg.Hello{},game.ChanRPC)
 
 	msg.Processor.SetRouter(&msg.UserLoginByWechat{},login.ChanRPC)
+	msg.Processor.SetRouter(&msg.UserReLogin{},login.ChanRPC)
 }

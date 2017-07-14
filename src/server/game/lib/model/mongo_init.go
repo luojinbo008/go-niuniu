@@ -1,4 +1,4 @@
-package internal
+package model
 
 import (
 	"github.com/name5566/leaf/db/mongodb"
@@ -25,12 +25,6 @@ func init()  {
 	if err != nil {
 		log.Fatal("ensure counter error: %v", err)
 	}
-
-	err = db.EnsureCounter(DB, "counters", "rooms")
-	if err != nil {
-		log.Fatal("ensure counter error: %v", err)
-	}
-
 }
 
 func mongoDBDestroy() {
