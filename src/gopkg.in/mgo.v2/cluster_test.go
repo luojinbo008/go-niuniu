@@ -196,7 +196,7 @@ func (s *S) TestModeStrong(c *C) {
 }
 
 func (s *S) TestModeMonotonic(c *C) {
-	// Must necessarily connect to a slave, otherwise the
+	// Must necessarily cache to a slave, otherwise the
 	// master connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
@@ -276,7 +276,7 @@ func (s *S) TestModeStrongAfterMonotonic(c *C) {
 	// until the master socket is necessary, so that no
 	// switch over occurs unless it's actually necessary.
 
-	// Must necessarily connect to a slave, otherwise the
+	// Must necessarily cache to a slave, otherwise the
 	// master connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
@@ -311,7 +311,7 @@ func (s *S) TestModeStrongAfterMonotonic(c *C) {
 }
 
 func (s *S) TestModeMonotonicWriteOnIteration(c *C) {
-	// Must necessarily connect to a slave, otherwise the
+	// Must necessarily cache to a slave, otherwise the
 	// master connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
@@ -356,7 +356,7 @@ func (s *S) TestModeMonotonicWriteOnIteration(c *C) {
 }
 
 func (s *S) TestModeEventual(c *C) {
-	// Must necessarily connect to a slave, otherwise the
+	// Must necessarily cache to a slave, otherwise the
 	// master connection will be available first.
 	session, err := mgo.Dial("localhost:40012")
 	c.Assert(err, IsNil)
@@ -660,7 +660,7 @@ func (s *S) TestModeEventualFallover(c *C) {
 
 	session.SetMode(mgo.Eventual, true)
 
-	// Should connect to the master when needed.
+	// Should cache to the master when needed.
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
@@ -735,7 +735,7 @@ func (s *S) TestModeSecondaryPreferredFallover(c *C) {
 	c.Assert(supvName(result.Host), Not(Equals), "rs1a")
 	secondary := result.Host
 
-	// Should connect to the primary when needed.
+	// Should cache to the primary when needed.
 	coll := session.DB("mydb").C("mycoll")
 	err = coll.Insert(M{"a": 1})
 	c.Assert(err, IsNil)
@@ -1146,7 +1146,7 @@ func (s *S) TestDialWithReplicaSetName(c *C) {
 		verifySyncedServers(session, 3)
 		session.Close()
 
-		connectionUrl += "&connect=direct"
+		connectionUrl += "&cache=direct"
 		session, err = mgo.Dial(connectionUrl)
 		c.Assert(err, IsNil)
 		verifySyncedServers(session, 1)
@@ -1156,7 +1156,7 @@ func (s *S) TestDialWithReplicaSetName(c *C) {
 }
 
 func (s *S) TestDirect(c *C) {
-	session, err := mgo.Dial("localhost:40012?connect=direct")
+	session, err := mgo.Dial("localhost:40012?cache=direct")
 	c.Assert(err, IsNil)
 	defer session.Close()
 
@@ -1200,7 +1200,7 @@ func (s *S) TestDirect(c *C) {
 }
 
 func (s *S) TestDirectToUnknownStateMember(c *C) {
-	session, err := mgo.Dial("localhost:40041?connect=direct")
+	session, err := mgo.Dial("localhost:40041?cache=direct")
 	c.Assert(err, IsNil)
 	defer session.Close()
 
@@ -1242,7 +1242,7 @@ func (s *S) TestFailFast(c *C) {
 
 func (s *S) countQueries(c *C, server string) (n int) {
 	defer func() { c.Logf("Queries for %q: %d", server, n) }()
-	session, err := mgo.Dial(server + "?connect=direct")
+	session, err := mgo.Dial(server + "?cache=direct")
 	c.Assert(err, IsNil)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
@@ -1264,7 +1264,7 @@ func (s *S) countQueries(c *C, server string) (n int) {
 
 func (s *S) countCommands(c *C, server, commandName string) (n int) {
 	defer func() { c.Logf("Queries for %q: %d", server, n) }()
-	session, err := mgo.Dial(server + "?connect=direct")
+	session, err := mgo.Dial(server + "?cache=direct")
 	c.Assert(err, IsNil)
 	defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
@@ -1308,7 +1308,7 @@ func (s *S) TestMonotonicSlaveOkFlagWithMongos(c *C) {
 
 	// Wait until all servers see the data.
 	for _, addr := range []string{"localhost:40021", "localhost:40022", "localhost:40023"} {
-		session, err := mgo.Dial(addr + "?connect=direct")
+		session, err := mgo.Dial(addr + "?cache=direct")
 		c.Assert(err, IsNil)
 		defer session.Close()
 		session.SetMode(mgo.Monotonic, true)
@@ -1398,7 +1398,7 @@ func (s *S) TestSecondaryModeWithMongos(c *C) {
 
 	// Wait until all servers see the data.
 	for _, addr := range []string{"localhost:40021", "localhost:40022", "localhost:40023"} {
-		session, err := mgo.Dial(addr + "?connect=direct")
+		session, err := mgo.Dial(addr + "?cache=direct")
 		c.Assert(err, IsNil)
 		defer session.Close()
 		session.SetMode(mgo.Monotonic, true)

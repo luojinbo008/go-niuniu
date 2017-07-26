@@ -190,7 +190,7 @@ const (
 //
 // The following connection options are supported after the question mark:
 //
-//     connect=direct
+//     cache=direct
 //
 //         Disables the automatic replica set server discovery logic, and
 //         forces the use of servers provided only (even if secondaries).
@@ -198,7 +198,7 @@ const (
 //         must be relaxed to Monotonic or Eventual via SetMode.
 //
 //
-//     connect=replicaSet
+//     cache=replicaSet
 //
 //  	   Discover replica sets automatically. Default connection behavior.
 //
@@ -294,7 +294,7 @@ func ParseURL(url string) (*DialInfo, error) {
 			if err != nil {
 				return nil, errors.New("bad value for maxPoolSize: " + v)
 			}
-		case "connect":
+		case "cache":
 			if v == "direct" {
 				direct = true
 				break
@@ -2059,7 +2059,7 @@ func (s *Session) Fsync(async bool) error {
 // being flushed while the server is locked, but since only the server
 // connected to is locked, for locking specific secondaries it may be
 // necessary to establish a connection directly to the secondary (see
-// Dial's connect=direct option).
+// Dial's cache=direct option).
 //
 // As an important caveat, note that once a write is attempted and
 // blocks, follow up reads will block as well due to the way the

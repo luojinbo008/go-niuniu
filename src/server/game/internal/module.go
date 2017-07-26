@@ -3,6 +3,7 @@ package internal
 import (
 	"github.com/name5566/leaf/module"
 	"server/base"
+	game_init "server/game/lib/init"
 )
 
 var (
@@ -15,7 +16,10 @@ type Module struct {
 }
 
 func (m *Module) OnInit() {
+
 	m.Skeleton = skeleton
+	game_init.InitAreaAndRoom()
+	game_init.InitRoomDesk()
 }
 
 func (m *Module) OnDestroy() {

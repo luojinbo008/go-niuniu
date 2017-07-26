@@ -18,10 +18,10 @@ const (
 	GAMEINFO = "nn_game"
 )
 
-func getUserGameData(UserId int) (userGameData UserGameData, err error) {
+func (model *Model) GetUserGameData(UserId int) (userGameData UserGameData, err error) {
 
-	db := mongoDB.Ref()
-	defer mongoDB.UnRef(db)
+	db := model.mongoDB.Ref()
+	defer model.mongoDB.UnRef(db)
 
 	err = db.DB(DB).C(GAMEINFO).Find(bson.M{
 		"userid"	: UserId,

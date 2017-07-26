@@ -3,8 +3,8 @@ package internal
 import (
 	"github.com/name5566/leaf/gate"
 	"server/msg"
-	"server/game/lib/model"
 	"fmt"
+	"server/game/lib/tool"
 )
 
 func init() {
@@ -28,7 +28,7 @@ func rpcLoginWechatAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
 	m := args[1].(*msg.UserLoginByWechat)
 
-	userInfo, err := model.WechatLogin(m)
+	userInfo, err := tool.WechatLogin(m)
 
 	if err != nil {
 		a.WriteMsg(
@@ -41,15 +41,10 @@ func rpcLoginWechatAgent(args []interface{}) {
 		return
 	}
 	a.SetUserData(userInfo)
-	// 返回信息
-	a.WriteMsg(
-		&msg.CodeState {
-			CODE 	: msg.MSG_CODE_SUCCESS,
-			CMD		: msg.CMD_MY_USER_INFO,
-			MSG		: "LOGIN SUCCESS",
-			DATA	: a.UserData(),
-		},
-	)
+
+	// 登陆返回
+	tool.PushUserLoginInfo(a)
+
 	return
 }
 
@@ -57,7 +52,7 @@ func rpcLoginReAgent(args []interface{})  {
 	a := args[0].(gate.Agent)
 	m := args[1].(*msg.UserReLogin)
 
-	userInfo, err := model.ReLogin(m)
+	userInfo, err := tool.ReLogin(m)
 
 	if err != nil {
 		a.WriteMsg(
@@ -69,15 +64,8 @@ func rpcLoginReAgent(args []interface{})  {
 		)
 		return
 	}
-
 	a.SetUserData(userInfo)
 
-	a.WriteMsg(
-		&msg.CodeState {
-			CODE 	: msg.MSG_CODE_SUCCESS,
-			CMD		: msg.CMD_MY_USER_INFO,
-			MSG		: "RELOGIN SUCCESS",
-			DATA	: a.UserData(),
-		},
-	)
+	// 登陆返回
+	tool.PushUserLoginInfo(a)
 }

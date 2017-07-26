@@ -27,7 +27,7 @@ for (var i = 0; i != 60; i++) {
 		rs3a = new Mongo("127.0.0.1:40031").getDB("admin")
 		break
 	} catch(err) {
-		print("Can't connect yet...")
+		print("Can't cache yet...")
 	}
 	sleep(1000)
 }

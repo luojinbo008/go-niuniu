@@ -17,6 +17,8 @@ func init() {
 	Processor.Register(&UserLoginByWechat{})
 	Processor.Register(&CodeState{})
 	Processor.Register(&UserReLogin{})
+
+	Processor.Register(&EnterGameRoom{})
 }
 
 type CodeState struct {
@@ -39,4 +41,12 @@ type UserLoginByWechat struct {
 type UserReLogin struct {
 	AccountID string
 	AccessToken string
+}
+
+// 进入房间
+type EnterGameRoom struct {
+	AreaId		int
+	AreaType	int
+	IsCivi		int
+	Type 		string
 }

@@ -525,7 +525,7 @@ var unmarshalItems = []testItemType{
 	{map[string][]int{"array": []int{5, 9}},
 		"\x04array\x00" + wrapInDoc("\x100\x00\x05\x00\x00\x00"+"\x021\x00\x02\x00\x00\x00s\x00"+"\x102\x00\x09\x00\x00\x00")},
 
-	// Wrong type. Shouldn't init pointer.
+	// Wrong type. Shouldn't tool pointer.
 	{&struct{ Str *byte }{},
 		"\x02str\x00\x02\x00\x00\x00s\x00"},
 	{&struct{ Str *struct{ Str string } }{},
