@@ -10,5 +10,5 @@ var gameCache cache.Cache
 
 func init()  {
 	gameModel.InitModel()
-	gameCache.InitModel()
+	gameCache.InitCache()
 }

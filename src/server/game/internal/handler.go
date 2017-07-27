@@ -5,14 +5,14 @@ import (
 	"github.com/name5566/leaf/gate"
 	"reflect"
 	"server/msg"
-	// "server/game/lib/tool"
+	"server/game/lib/tool"
 )
 
 func init() {
 
 	// 向当前模块（game 模块）注册 Hello 消息的消息处理函数 handleHello
 	handler(&msg.Hello{}, handleHello)
-	// handler(&msg.EnterGameRoom{}, handleEnterGameRoom)
+	handler(&msg.EnterGameRoom{}, handleEnterGameRoom)
 
 }
 
@@ -29,12 +29,10 @@ func handleHello(args []interface{}) {
 	a.WriteMsg(&msg.Hello{ Name : "Client", })
 }
 
-/*
+
 func handleEnterGameRoom(args []interface{})  {
 
 	m := args[0].(*msg.EnterGameRoom)
 	a := args[1].(gate.Agent)
-
-	game_tool.EnterGameRoom(a, m)
-
-}*/
+	tool.EnterGameRoom(a, m)
+}

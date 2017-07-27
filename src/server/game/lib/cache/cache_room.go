@@ -1,5 +1,9 @@
 package cache
 
+import (
+	"gopkg.in/mgo.v2/bson"
+)
+
 const (
 	LINEROOMCONFIGDB  		= "line_nn_room_config"
 )
@@ -44,4 +48,15 @@ func (cache *Cache) GetLineRoomList() (lineAreaRoomList LineAreaRoomList) {
 		lineAreaRoomList.LineAreaRooms = append(lineAreaRoomList.LineAreaRooms, lineRoomConfig)
 	}
 	return lineAreaRoomList
+}
+
+func (cache *Cache) IncrRoomUserNum(roomId int) (err error) {
+	db := cache.mongoDB.Ref()
+	defer cache.mongoDB.UnRef(db)
+
+	err = db.DB(DB).C(LINEROOMCONFIGDB).Update(
+		bson.M{"_id": roomId},
+		bson.M{"$inc": bson.M{ "Num":  + 1}},
+	)
+	return err
 }
