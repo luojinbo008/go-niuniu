@@ -2,23 +2,13 @@ package tool
 
 import (
 	"server/msg"
+	"github.com/name5566/leaf/gate"
 	"go.lib/wechat/oauth2"
 	"github.com/name5566/leaf/log"
 	"fmt"
 	"server/game/lib/model"
+	"server/game/lib/cache"
 )
-
-type UserInfo struct {
-	AccountID		string			// 用户线上看到的id
-	NickName		string			// 用户的昵称
-	Sex 			int				// 性别 0--未知 1--男 2--女
-	HeadImgUrl		string			// 头像
-	Diamond			int             // 钻石
-	TotalCount		int				// 游戏总次数
-	WinCount		int				// 游戏胜利次数
-	Money			int				// 游戏金币
-	AccessToken		string 			// token
-}
 
 // 微信端登陆
 func WechatLogin(wechatLogin *msg.UserLoginByWechat) (userInfo UserInfo, err error) {
@@ -80,6 +70,7 @@ func WechatLogin(wechatLogin *msg.UserLoginByWechat) (userInfo UserInfo, err err
 	}
 
 	userInfo = UserInfo{
+		userData.UserID,
 		userData.AccountID,
 		userData.NickName,
 		userData.Sex,
@@ -110,6 +101,7 @@ func ReLogin(userReLogin *msg.UserReLogin) (userInfo UserInfo, err error) {
 	}
 
 	userInfo = UserInfo{
+		userData.UserID,
 		userData.AccountID,
 		userData.NickName,
 		userData.Sex,
@@ -122,4 +114,30 @@ func ReLogin(userReLogin *msg.UserReLogin) (userInfo UserInfo, err error) {
 	}
 
 	return userInfo, err
+}
+
+
+func LineUserCut(fd string, userId int) (err error) {
+	lineUserInfo, err := gameCache.GetLineUser(userId)
+	if err != nil {
+		return err
+	}
+	lineUserInfo.Fd = ""
+	lineUserInfo.Ip = ""
+	err = gameCache.ModifyLineUser(lineUserInfo)
+	return err
+}
+
+func LineUserModify(a gate.Agent) (err error) {
+	userData := a.UserData()
+	data := userData.(UserInfo)
+	var lineUserInfo cache.LineUserInfo
+
+	lineUserInfo.Ip = "192.168.56.101"
+	lineUserInfo.Fd = fmt.Sprint("%s", &a)
+	lineUserInfo.UserId = data.UserId
+
+	err = gameCache.ModifyLineUser(lineUserInfo)
+	log.Debug("%v", err)
+	return err
 }

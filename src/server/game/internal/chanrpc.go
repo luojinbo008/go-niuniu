@@ -7,7 +7,11 @@ import (
 	"server/game/lib/tool"
 )
 
+
+var Agents map[string]gate.Agent
+
 func init() {
+	Agents = make(map[string]gate.Agent)
 	skeleton.RegisterChanRPC("NewAgent", rpcNewAgent)
 	skeleton.RegisterChanRPC("CloseAgent", rpcCloseAgent)
 	skeleton.RegisterChanRPC("LoginWechatAgent", rpcLoginWechatAgent)
@@ -16,18 +20,24 @@ func init() {
 
 func rpcNewAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	_ = a
+	Agents[fmt.Sprint("%s", &a)] = a
 }
 
 func rpcCloseAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	_ = a
+	Agents[fmt.Sprint("%s", &a)] = nil
+	userData := a.UserData()
+	var data tool.UserInfo
+	if userData != nil {
+		data = userData.(tool.UserInfo)
+		tool.LineUserCut(fmt.Sprint("%s", &a), data.UserId)
+	}
+
 }
 
 func rpcLoginWechatAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
 	m := args[1].(*msg.UserLoginByWechat)
-
 	userInfo, err := tool.WechatLogin(m)
 
 	if err != nil {
@@ -41,14 +51,15 @@ func rpcLoginWechatAgent(args []interface{}) {
 		return
 	}
 	a.SetUserData(userInfo)
+	tool.LineUserModify(a)
+
 
 	// 登陆返回
 	tool.PushUserLoginInfo(a)
-
 	return
 }
 
-func rpcLoginReAgent(args []interface{})  {
+func rpcLoginReAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
 	m := args[1].(*msg.UserReLogin)
 
@@ -65,6 +76,7 @@ func rpcLoginReAgent(args []interface{})  {
 		return
 	}
 	a.SetUserData(userInfo)
+	tool.LineUserModify(a)
 
 	// 登陆返回
 	tool.PushUserLoginInfo(a)
