@@ -7,11 +7,7 @@ import (
 	"server/game/lib/tool"
 )
 
-
-var Agents map[string]gate.Agent
-
 func init() {
-	Agents = make(map[string]gate.Agent)
 	skeleton.RegisterChanRPC("NewAgent", rpcNewAgent)
 	skeleton.RegisterChanRPC("CloseAgent", rpcCloseAgent)
 	skeleton.RegisterChanRPC("LoginWechatAgent", rpcLoginWechatAgent)
@@ -20,19 +16,13 @@ func init() {
 
 func rpcNewAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	Agents[fmt.Sprint("%s", &a)] = a
+	tool.Agents[fmt.Sprintf("%s", &a)] = a
 }
 
 func rpcCloseAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	Agents[fmt.Sprint("%s", &a)] = nil
-	userData := a.UserData()
-	var data tool.UserInfo
-	if userData != nil {
-		data = userData.(tool.UserInfo)
-		tool.LineUserCut(fmt.Sprint("%s", &a), data.UserId)
-	}
-
+	tool.Agents[fmt.Sprintf("%s", &a)] = nil
+	tool.LineUserCut(a)
 }
 
 func rpcLoginWechatAgent(args []interface{}) {
@@ -52,7 +42,6 @@ func rpcLoginWechatAgent(args []interface{}) {
 	}
 	a.SetUserData(userInfo)
 	tool.LineUserModify(a)
-
 
 	// 登陆返回
 	tool.PushUserLoginInfo(a)

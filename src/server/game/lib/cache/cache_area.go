@@ -49,3 +49,14 @@ func (cache *Cache) IncrAreaUserNum(areaId int) (err error) {
 	)
 	return err
 }
+
+func (cache *Cache) LeaveLineArea(areaId int) (err error) {
+	db := cache.mongoDB.Ref()
+	defer cache.mongoDB.UnRef(db)
+
+	err = db.DB(DB).C(LINEAREACONFIGDB).Update(
+		bson.M{"_id": areaId},
+		bson.M{"$inc": bson.M{"Num":  - 1}},
+	)
+	return err
+}

@@ -1,5 +1,9 @@
 package tool
 
+import (
+	"server/game/lib/cache"
+)
+
 type UserInfo struct {
 	UserId			int				// 用户id
 	AccountID		string			// 用户线上看到的id
@@ -13,3 +17,6 @@ type UserInfo struct {
 	AccessToken		string 			// token
 }
 
+type LineUserInfoList struct {
+	LineUserInfos []cache.LineUserInfo
+}

@@ -5,11 +5,21 @@ import (
 )
 
 type LineUserInfo struct {
-	Ip				string			// 服务器IP
-	Fd				string			// 内存地址
+
 	UserId			int				// 用户ID
+
 	IsPlaying		int				// 是否在游戏
-	IsOutRoom		int				// 是否在房间
+	IsWaiting		int				// 是否等待开局了
+
+	IsCutLine		int				// 是否断线
+	IsOnLine		int 			// 是否在线
+	InArea			int 			// 在哪个场次
+	InRoom			int 			// 在哪个房间
+	InDesk			int				// 在哪个桌子
+	InSeat			int				// 在哪个座位
+	InDeskStart		int				// 开始进入桌子时间
+	IsOutRoom		int				// 在线退出桌子
+
 }
 
 const (
@@ -20,14 +30,20 @@ func (cache *Cache) ModifyLineUser(userInfo LineUserInfo) (err error) {
 	db := cache.mongoDB.Ref()
 	defer cache.mongoDB.UnRef(db)
 
-	err = db.DB(DB).C(LINEUSERDB).Update(
+	_, err = db.DB(DB).C(LINEUSERDB).Upsert(
 		bson.M{
-			"ip" : userInfo.Ip,
-			"fd" : userInfo.Fd,
+			"userid" : userInfo.UserId,
 		},
-		bson.M{"$unset": bson.M{
-				"userid":		userInfo.UserId,
+		bson.M{"$set": bson.M{
 				"isplaying":	userInfo.IsPlaying,
+				"iswaiting":	userInfo.IsWaiting,
+				"iscutline":	userInfo.IsCutLine,
+				"isonline":		userInfo.IsOnLine,
+				"inarea":		userInfo.InArea,
+				"inroom":		userInfo.InRoom,
+				"indesk":		userInfo.InDesk,
+				"insert":		userInfo.InSeat,
+				"indeskstart":	userInfo.InDeskStart,
 				"isoutroom":	userInfo.IsOutRoom,
 			},
 		},

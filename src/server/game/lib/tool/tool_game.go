@@ -104,3 +104,67 @@ func EnterGameRoom(a gate.Agent, data *msg.EnterGameRoom) {
 		},
 	)
 }
+
+// 用户离开房间专门处理
+// action 1 断开连接 2 用户主动退出 3 用户被踢出房间
+func UserLeaveDesk(userId int, action int) {
+
+	// 获取用户信息
+	lineUserInfo, _ := gameCache.GetLineUser(userId)
+
+	// 判断用户是否在游戏
+	if lineUserInfo.IsPlaying == 1 {
+
+		// 正在游戏断线
+		lineUserInfo.IsOutRoom = 1
+	} else {
+
+		// 不在游戏断线，数据清除
+		if lineUserInfo.InDesk != 0 {
+
+			// 在桌子上了，退出桌子
+			gameCache.LeaveLineSeat(lineUserInfo.InArea, lineUserInfo.InRoom, lineUserInfo.InSeat, lineUserInfo.InDesk)
+
+			// 桌子人数减一
+			gameCache.LeaveLineDesk(lineUserInfo.InArea, lineUserInfo.InRoom, lineUserInfo.InDesk)
+
+			// 场次人数减一
+			gameCache.LeaveLineArea(lineUserInfo.InArea)
+
+			// 房间人数减一
+			gameCache.LeaveLineRoom(lineUserInfo.InArea, lineUserInfo.InRoom)
+
+		}
+
+		lineUserInfo.InArea 		= 0
+		lineUserInfo.InRoom 		= 0
+		lineUserInfo.InDesk 		= 0
+		lineUserInfo.IsPlaying 		= 0
+		lineUserInfo.IsWaiting 		= 0
+		lineUserInfo.IsOutRoom 		= 0
+		lineUserInfo.InSeat 		= 0
+		lineUserInfo.InDeskStart	= 0
+
+		if action == 1 {
+			lineUserInfo.IsOnLine 	= 0
+			lineUserInfo.IsCutLine 	= 1
+		}
+	}
+
+	// 更新用户数据
+	gameCache.ModifyLineUser(lineUserInfo)
+
+	// 删除用户对应连接
+	if action == 1 {
+		gameCache.RemoveLineUserFdByUserId(userId)
+	}
+
+	// 用户主动退出
+	if action == 2 {
+
+		// 推送桌子数据
+		LoopPushDeskUser(lineUserInfo.InDesk)
+
+		// 推动数据给用户，带上用户基本数据
+	}
+}

@@ -60,3 +60,17 @@ func (cache *Cache) IncrRoomUserNum(roomId int) (err error) {
 	)
 	return err
 }
+
+func (cache *Cache) LeaveLineRoom(areaId int, roomId int) (err error) {
+	db := cache.mongoDB.Ref()
+	defer cache.mongoDB.UnRef(db)
+
+	err = db.DB(DB).C(LINEROOMCONFIGDB).Update(
+		bson.M{
+			"_id"		: roomId,
+			"areaid"	: areaId,
+		},
+		bson.M{"$inc": bson.M{"Num":  - 1}},
+	)
+	return err
+}

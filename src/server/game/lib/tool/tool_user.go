@@ -116,27 +116,28 @@ func ReLogin(userReLogin *msg.UserReLogin) (userInfo UserInfo, err error) {
 	return userInfo, err
 }
 
+func LineUserCut(a gate.Agent) (err error) {
+	userData := a.UserData()
+	if userData != nil {
+		//_ := userData.(tool.UserInfo)
 
-func LineUserCut(fd string, userId int) (err error) {
-	lineUserInfo, err := gameCache.GetLineUser(userId)
-	if err != nil {
-		return err
+		// 用户断线
+
 	}
-	lineUserInfo.Fd = ""
-	lineUserInfo.Ip = ""
-	err = gameCache.ModifyLineUser(lineUserInfo)
-	return err
+	return  nil
 }
 
 func LineUserModify(a gate.Agent) (err error) {
 	userData := a.UserData()
 	data := userData.(UserInfo)
-	var lineUserInfo cache.LineUserInfo
+	var lineUserInfo 	cache.LineUserInfo
+	var lineUserFd 		cache.LineUserFd
 
-	lineUserInfo.Ip = "192.168.56.101"
-	lineUserInfo.Fd = fmt.Sprint("%s", &a)
+	lineUserFd.Ip = "192.168.56.101"
+	lineUserFd.Fd = fmt.Sprintf("%s", &a)
+	err = gameCache.AddLineUserFd(lineUserFd)
+	log.Debug("%v", err)
 	lineUserInfo.UserId = data.UserId
-
 	err = gameCache.ModifyLineUser(lineUserInfo)
 	log.Debug("%v", err)
 	return err

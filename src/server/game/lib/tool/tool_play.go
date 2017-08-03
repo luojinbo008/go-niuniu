@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-func GetRoomByAreaId(userInfo interface{}, areaId int) (x bool, err error)  {
+func GetRoomByAreaId(userInfo interface{}, areaId int) (b bool, err error)  {
 
 	userData := userInfo.(UserInfo)
 
